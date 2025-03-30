@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/2922998b-76be-4a0d-8728-5e01b60e358f)# Lenslate
+# Lenslate
 
 ## Descrizione  
 Il progetto è stato realizzato cercando di imitare almeno parzialmente le funzionalità della celebre app Google Lens. Per farlo, sono state utilizzate tecnologie come CameraX per la gestione della fotocamera e ML Kit per l’analisi delle immagini direttamente sul dispositivo, senza necessità di connessione a servizi cloud.
