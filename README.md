@@ -25,7 +25,7 @@ In futuro, potrebbe essere integrata una funzione di ricerca avanzata per oggett
 
 <p align="start">
 Schermata Principale<br/>
-<img src="https://i.imgur.com/bXSgKiN.jpeg" height="80%" width="30%" alt="Schermata App"/>
+<img src="https://i.imgur.com/bXSgKiN.jpeg" height="80%" width="40%" alt="Schermata App"/>
 <br /><br />
 
 ## Camera Preview Composable
@@ -78,7 +78,7 @@ fun CameraPreview(
 ```
   
 Nav Drawer<br/>
-<img src="https://i.imgur.com/zQ69NXy.jpeg" height="80%" width="30%" alt="Schermata App"/>
+<img src="https://i.imgur.com/zQ69NXy.jpeg" height="80%" width="40%" alt="Schermata App"/>
 <br /><br />
 
 ```kotlin
@@ -139,7 +139,7 @@ ModalNavigationDrawer(
 
 
 Image Editor<br/>
-<img src="https://i.imgur.com/zQ69NXy.jpeg" height="80%" width="30%" alt="Schermata App"/>
+<img src="https://i.imgur.com/zQ69NXy.jpeg" height="80%" width="40%" alt="Schermata App"/>
 <br />
 </p>
 
