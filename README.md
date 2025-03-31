@@ -138,9 +138,372 @@ ModalNavigationDrawer(
 ```
 
 
-Image Editor<br/>
-<img src="https://i.imgur.com/zQ69NXy.jpeg" height="80%" width="40%" alt="Schermata App"/>
+Custom Image Editor<br/>
+<img src="https://i.imgur.com/AVB2AVr.jpeg" height="80%" width="40%" alt="Schermata App"/>
 <br />
+
+```kotlin
+
+ var rectWidth by remember { mutableFloatStateOf(0f) }
+    var rectHeight by remember { mutableFloatStateOf(0f) }
+
+    var offsetX by remember { mutableFloatStateOf(0f) }
+    var offsetY by remember { mutableFloatStateOf(0f) }
+
+    var sizeWidth by remember { mutableFloatStateOf(0f) }
+    var sizeHeight by remember { mutableFloatStateOf(0f) }
+
+    var lastDragAmount by remember { mutableStateOf(Offset.Zero) }
+    var isDragging by remember { mutableStateOf(false) }
+
+
+ Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(5.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(15.dp))
+                                ) {
+
+                                    if (bitmap.isNotEmpty()) {
+                                        val currentBitmap = scaleBitmapIfNeeded(bitmap.last(),filePath).asImageBitmap()
+                                        Image(
+                                            bitmap = currentBitmap,
+                                            contentDescription = null
+                                        )
+
+                                        Canvas(
+                                            modifier = Modifier.matchParentSize()
+                                        ) {
+                                            sizeWidth = size.width
+                                            sizeHeight = size.height
+
+                                            val strokeWidth = 8f
+                                            rectWidth = cropWidth * size.width / currentBitmap.width
+                                            rectHeight = cropHeight * size.height / currentBitmap.height
+
+                                            if (!offsetFirstLook) {
+                                                offsetX =
+                                                    ((size.width - rectWidth) / 2).coerceIn(
+                                                        0f,
+                                                        size.width - rectWidth
+                                                    )
+                                                offsetY = ((size.height - rectHeight) / 2).coerceIn(
+                                                    0f,
+                                                    size.height - rectHeight
+                                                )
+                                                offsetFirstLook = true
+                                            }
+
+                                            offsetX = offsetX.coerceIn(0f, size.width - rectWidth)
+                                            offsetY = offsetY.coerceIn(0f, size.height - rectHeight)
+
+
+                                            drawRoundRect(
+                                                color = ROIcolor,
+                                                topLeft = Offset(offsetX, offsetY),
+                                                size = Size(rectWidth, rectHeight),
+                                                style = Stroke(width = strokeWidth),
+                                                cornerRadius = CornerRadius(15f, 15f)
+                                            )
+
+
+                                            drawRoundRect(
+                                                color = Color.Transparent,
+                                                topLeft = Offset(
+                                                    offsetX + strokeWidth,
+                                                    offsetY + strokeWidth
+                                                ),
+                                                size = Size(
+                                                    rectWidth - 2 * strokeWidth,
+                                                    rectHeight - 2 * strokeWidth
+                                                ),
+                                                cornerRadius = CornerRadius(15f, 15f)
+                                            )
+                                        }
+
+                                        Icon(
+                                            imageVector = Icons.Default.ControlCamera,
+                                            contentDescription = "Move offset",
+                                            tint = ROIcolor,
+                                            modifier = Modifier
+                                                .size(30.dp)
+                                                .offset(
+                                                    x = (offsetX / d.density).dp,
+                                                    y = (offsetY / d.density).dp
+                                                )
+                                                .pointerInput(Unit) {
+                                                    detectDragGestures(
+                                                        onDragStart = { isDragging = true },
+                                                        onDragEnd = {
+                                                            isDragging = false
+                                                            lastDragAmount = Offset.Zero
+                                                        }
+                                                    ) { _, dragAmount ->
+                                                        if (isDragging) {
+                                                            val original = Offset(offsetX, offsetY)
+                                                            val summed = original + dragAmount
+
+                                                            offsetX = summed.x
+                                                            offsetY = summed.y
+                                                        }
+                                                    }
+                                                }
+                                        )
+                                    }
+
+                                }
+
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(10.dp)
+                                ) {
+                                    Text(
+                                        text = stringResource(id = R.string.width),
+                                        fontWeight = FontWeight.Bold,
+                                        style = TextStyle(color = Color.White)
+                                    )
+
+                                    Spacer(modifier = Modifier.width(5.dp))
+
+                                    Slider(
+                                        value = cropWidth,
+                                        onValueChange = {
+                                            cropWidth = it
+                                        },
+                                        colors = SliderDefaults.colors(
+                                            thumbColor = colorTertiary,
+                                            activeTrackColor = colorTertiary,
+                                            inactiveTrackColor = colorFourth
+                                        ),
+                                        valueRange = 0f..image.width.toFloat(),
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(10.dp)
+                                ) {
+                                    Text(
+                                        text = stringResource(id = R.string.height),
+                                        fontWeight = FontWeight.Bold,
+                                        style = TextStyle(color = Color.White)
+                                    )
+
+                                    Spacer(modifier = Modifier.width(5.dp))
+
+                                    Slider(
+                                        value = cropHeight,
+                                        onValueChange = {
+                                            cropHeight = it
+                                        },
+                                        colors = SliderDefaults.colors(
+                                            thumbColor = colorTertiary,
+                                            activeTrackColor = colorTertiary,
+                                            inactiveTrackColor = colorFourth
+                                        ),
+                                        valueRange = 0f..image.height.toFloat(),
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+
+                            }
+
+```
+
+Scansione Testo e Traduzione<br/>
+<img src="https://i.imgur.com/2UWTaMr.jpeg" height="80%" width="40%" alt="Schermata App"/>
+<br />
+
+## Analisi Immagine (Testo e Landscape)
+
+```kotlin
+private fun imageProcess(
+    context: Context,
+    bitmap: Bitmap,
+    viewModel: MainViewmodel,
+    toolInt : Int,
+    userState: Boolean,
+    userId: String?,
+    scope : CoroutineScope
+){
+
+    val image = FirebaseVisionImage.fromBitmap(bitmap)
+
+    if (toolInt == 1){
+        val languageIdentifier = LanguageIdentification.getClient(
+            LanguageIdentificationOptions.Builder()
+                .setConfidenceThreshold(0.90f)
+                .build()
+        )
+
+        val cloudTextRecognizer = FirebaseVision.getInstance()
+            .cloudDocumentTextRecognizer
+
+        val qrAnalyzer = FirebaseVision.getInstance()
+            .visionBarcodeDetector
+
+        qrAnalyzer.detectInImage(image)
+            .addOnSuccessListener { qrResult ->
+                if(qrResult.isNotEmpty()){
+                    val barcodeStrings = qrResult.mapNotNull { it.rawValue }
+                    val qrString = barcodeStrings.first()
+                    viewModel.OnQRanalized(qrString)
+                }
+                else{
+                    val emptyString = ""
+                    viewModel.OnQRanalized(emptyString)
+                }
+            }
+            .addOnFailureListener{
+                val emptyString = ""
+                viewModel.OnQRanalized(emptyString)
+            }
+
+
+        cloudTextRecognizer.processImage(image)
+            .addOnSuccessListener { text ->
+
+                val textRecognized = text.text
+
+                languageIdentifier.identifyLanguage(textRecognized)
+                    .addOnSuccessListener { language ->
+                        viewModel.onLanguageRecognized(language)
+                    }
+                viewModel.OnTakePhotoLine(textRecognized)
+
+                if (textRecognized.isNotBlank()){
+                    if (userState){
+                        if (userId != null){
+                            scope.launch {
+                                writeStringData(userId, history = "history1",textRecognized,context)
+                            }
+                        }
+                    }
+                }
+
+            }
+            .addOnFailureListener { e ->
+                val emptyString = ""
+                Toast.makeText(context,R.string.somethingWrong, Toast.LENGTH_LONG).show()
+                viewModel.OnTakePhotoLine(emptyString)
+            }
+    }
+
+    if(toolInt == 3){
+
+        val detector = FirebaseVision.getInstance()
+            .visionCloudLandmarkDetector
+
+        detector.detectInImage(image)
+            .addOnSuccessListener { firebaseVisionCloudLandmarks ->
+                if (firebaseVisionCloudLandmarks.isNotEmpty()) {
+                    for (landmark in firebaseVisionCloudLandmarks) {
+                        val landmarkName = landmark.landmark
+                        val confidence = landmark.confidence
+                        val locations = landmark.locations
+                        for (location in locations) {
+                            val latitude = location.latitude
+                            val longitude = location.longitude
+                            viewModel.addLandmarkName(landmarkName, lat = latitude.toString(), long = longitude.toString())
+                        }
+                    }
+                } else {
+                    val emptyString = ""
+                    viewModel.addLandmarkName(emptyString,emptyString,emptyString)
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(context, R.string.somethingWrong, Toast.LENGTH_LONG).show()
+            }
+    }
+
+}
+```
+
+## Traduzione testo
+
+```kotlin
+suspend fun translate(
+    finalText: String,
+    scannedLanguage: String,
+    targetLanguage: String,
+    onLanguageTranslated : (String) -> Unit,
+    context: Context,
+    oneTime: Int,
+    userState: Boolean,
+    userId: String?,
+    scope: CoroutineScope
+): Result<String> {
+
+
+    return try {
+        withContext(Dispatchers.IO) {
+            val sourceLangCode = TranslateLanguage.fromLanguageTag(scannedLanguage)
+            val targetLangCode = TranslateLanguage.fromLanguageTag(targetLanguage)
+
+            val ai: ApplicationInfo = context.packageManager
+                .getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+            val value = ai.metaData["com.google.translation.API_KEY"]
+            val apiKey = value.toString()
+
+
+            val translate = TranslateOptions.newBuilder()
+                .setApiKey(apiKey)
+                .setTransportOptions(TranslateOptions.getDefaultHttpTransportOptions())
+                .build()
+                .service
+
+            val translation = translate.translate(
+                finalText,
+                Translate.TranslateOption.targetLanguage(targetLangCode),
+                Translate.TranslateOption.sourceLanguage(sourceLangCode)
+            )
+            val translatedText: String = translation.translatedText
+            val decodedTranslation = decodeHtmlEntities(translatedText)
+            onLanguageTranslated(decodedTranslation)
+            if (userState){
+                if (userId != null){
+                    scope.launch {
+                        writeStringData(userId, history = "history2",decodedTranslation,context)
+                    }
+                }
+            }
+            Result.success(decodedTranslation)
+        }
+    } catch (e: TranslateException) {
+
+        Log.e("TextRecognition", "Text recognition failed: ${e.message}", e)
+
+        withContext(Dispatchers.Main) {
+            if (oneTime == 0){
+                Toast.makeText(context, R.string.networkError, Toast.LENGTH_SHORT).show()
+            }
+        }
+        Result.failure(e)
+    } catch (e: NetworkOnMainThreadException) {
+
+        Log.e("TextRecognition", "Text recognition failed: ${e.message}", e)
+
+        withContext(Dispatchers.Main) {
+            if (oneTime == 0){
+                Toast.makeText(context, R.string.networkError, Toast.LENGTH_SHORT).show()
+            }
+        }
+        Result.failure(e)
+    }
+}
+```
+
 </p>
 
 <!--
