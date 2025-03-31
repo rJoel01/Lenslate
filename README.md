@@ -29,7 +29,7 @@ Schermata Principale<br/>
 <br /><br />
 
 ## Camera Preview Composable
-The following code implements a Camera Preview using Jetpack Compose and CameraX:
+Implementazione della preview usando jetpack compose e cameraX:
 
 ```kotlin
 @Composable
@@ -76,6 +76,89 @@ fun CameraPreview(
     }
 }
 ```
+
+## Scansione QR
+Implementazione della scansionde del qr sull'Image Analysis Analyzer
+
+```kotlin
+controller = LifecycleCameraController(this@SecondActivity).apply {
+            setEnabledUseCases(
+                CameraController.IMAGE_CAPTURE or CameraController.IMAGE_ANALYSIS
+            )
+            setImageAnalysisAnalyzer(
+                ContextCompat.getMainExecutor(applicationContext),
+                QrCodeAnalyzer{
+                    viewModel.OnQRanalized0(it)
+                }
+            )
+        }
+```
+
+## QR code Analyzer
+
+```kotlin
+class QrCodeAnalyzer(
+    private val onQrCodeScanned: (String) -> Unit
+) : ImageAnalysis.Analyzer {
+
+    private val supportedImageFormats = listOf(
+        ImageFormat.YUV_420_888,
+        ImageFormat.YUV_422_888,
+        ImageFormat.YUV_444_888,
+    )
+
+    override fun analyze(image: ImageProxy) {
+        if (image.format in supportedImageFormats) {
+            val bytes = image.planes.first().buffer.toByteArray()
+
+            val source = PlanarYUVLuminanceSource(
+                bytes,
+                image.width,
+                image.height,
+                0,
+                0,
+                image.width,
+                image.height,
+                false
+            )
+
+            val binaryBitmap = BinaryBitmap(HybridBinarizer(source))
+            
+            CoroutineScope(Dispatchers.Default).launch {
+                try {
+                    val result = MultiFormatReader().apply {
+                        setHints(
+                            mapOf(
+                                DecodeHintType.POSSIBLE_FORMATS to arrayListOf(
+                                    BarcodeFormat.QR_CODE
+                                )
+                            )
+                        )
+                    }.decode(binaryBitmap)
+
+                    onQrCodeScanned(result.text)
+                    Log.e("QR","THE QR HAS BEEN SCANNED")
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                } finally {
+                    image.close()
+                }
+            }
+        } else {
+            image.close()
+        }
+    }
+
+    private fun ByteBuffer.toByteArray() : ByteArray {
+        rewind()
+        return ByteArray(remaining()).also { get(it) }
+    }
+
+
+}
+```
+
   
 Nav Drawer<br/>
 <img src="https://i.imgur.com/zQ69NXy.jpeg" height="80%" width="40%" alt="Schermata App"/>
