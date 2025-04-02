@@ -3,7 +3,7 @@
 ## Descrizione  
 Il progetto è stato realizzato cercando di imitare almeno parzialmente le funzionalità della celebre app Google Lens. Per farlo, sono state utilizzate tecnologie come CameraX per la gestione della fotocamera e ML Kit per l’analisi delle immagini direttamente sul dispositivo, senza necessità di connessione a servizi cloud.
 
-A differenza di Google Lens, che sfrutta anche il machine learning basato su cloud, questa implementazione si concentra su un'elaborazione più locale, garantendo maggiore privacy e velocità. L'app è stata pensata principalmente per il riconoscimento e la traduzione di testi in tempo reale, risultando utile per studenti, viaggiatori e professionisti.
+A differenza di Google Lens, che sfrutta principalmente il machine learning basato su cloud, questa implementazione si concentra anche sull' elaborazione locale, garantendo maggiore privacy e velocità. L'app è stata pensata principalmente per il riconoscimento e la traduzione di testi in tempo reale, risultando utile per studenti, viaggiatori.
 
 In futuro, potrebbe essere integrata una funzione di ricerca avanzata per oggetti o la possibilità di salvare e organizzare i risultati delle scansioni in una libreria interna.
 
